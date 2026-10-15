@@ -4,12 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>English to IPA Converter: Free Phonetic Transcription Tool</title>
-<meta name="description" content="Type English text and get its IPA phonetic transcription with stress marks, American pronunciation. Free, instant, runs in your browser. Shows homophones and a/an.">
+<meta name="description" content="Type English text and get its IPA phonetic transcription with stress marks (American English). Free IPA translator with homophones and a/an hints.">
 <link rel="canonical" href="https://dimatretyak.github.io/english-to-ipa/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="English to IPA Converter">
 <meta property="og:description" content="Free phonetic transcription of English text in IPA, with stress marks and homophones.">
 <meta property="og:url" content="https://dimatretyak.github.io/english-to-ipa/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%234f46e5%22/%3E%3Ctext x=%2250%22 y=%2272%22 font-size=%2270%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22serif%22%3E%C9%99%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#4f46e5">
 <meta name="google-site-verification" content="4VjT7BQ4QTsjeoaicY8PP6N60NVR4AJBHA_ORjTsykU">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-237B2EDLRF"></script>
@@ -94,7 +96,7 @@ a { color: var(--accent); }
 <body>
 <main>
 <h1>English to IPA Converter</h1>
-<p class="lead">Type or paste English text to get its phonetic transcription in the International Phonetic Alphabet, with stress marks. American pronunciation, free, and it runs entirely in your browser.</p>
+<p class="lead">Type or paste English text to translate it into the International Phonetic Alphabet (IPA): a phonetic transcription with stress marks, in American pronunciation. Free, and it runs entirely in your browser.</p>
 
 <section class="card" aria-label="Converter">
   <label for="in">English text</label>
@@ -103,7 +105,7 @@ a { color: var(--accent); }
     <div id="out" class="ipa" aria-live="polite">/həˈloʊ haʊ ɑr ju təˈdeɪ/</div>
     <button id="copy" type="button">Copy</button>
   </div>
-  <div id="status" class="status">Loading the dictionary (about 1 MB)…</div>
+  <div id="status" class="status">Start typing to convert. The dictionary (about 1 MB) loads on first use.</div>
   <div class="words">
     <table>
       <thead><tr><th>Word</th><th>IPA</th><th>a / an</th><th>Sounds like</th></tr></thead>
@@ -124,7 +126,7 @@ a { color: var(--accent); }
   <a href="https://wordofdayapp.com/?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=english_to_ipa&amp;utm_content=main_cta">Get today's word →</a>
 </aside>
 
-<h2>How the converter works</h2>
+<h2>How the IPA translator works</h2>
 <p>Each word is looked up in the <a href="https://github.com/cmusphinx/cmudict">CMU Pronouncing Dictionary</a>, about 126,000 words and names with their American pronunciation. The dictionary's ARPAbet codes are turned into IPA symbols, and the stress mark is placed before the stressed syllable: <span class="ipa">ˈ</span> for primary stress, <span class="ipa">ˌ</span> for secondary. One-syllable words get no mark, as in most dictionaries.</p>
 <p>The word list under the result shows every pronunciation a word has, whether it takes <em>a</em> or <em>an</em> (that depends on the first sound, not the first letter: <em>an hour</em>, <em>a university</em>), and common words that sound the same.</p>
 
@@ -210,16 +212,23 @@ input.addEventListener("input", render);
 // One "convert" event per visit, when the visitor types for the first time (no text is sent).
 input.addEventListener("input", () => gtag("event", "convert"), { once: true });
 
-fetch("data/dict.json")
-  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then((data) => {
-    dict = data.w;
-    // A word with two pronunciations (read: /rɛd/, /rid/) sits in two groups.
-    for (const group of data.h) for (const w of group) homophones.set(w, [...(homophones.get(w) || []), ...group]);
-    status.textContent = "Ready. The result updates as you type.";
-    render();
-  })
-  .catch(() => { status.textContent = "Couldn't load the dictionary. Check your connection and reload the page."; });
+// The dictionary loads on first use, not on page load: parsing 3 MB of JSON
+// blocks the main thread, and visitors who only read the page don't need it.
+function load() {
+  status.textContent = "Loading the dictionary (about 1 MB)…";
+  fetch("data/dict.json")
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((data) => {
+      dict = data.w;
+      // A word with two pronunciations (read: /rɛd/, /rid/) sits in two groups.
+      for (const group of data.h) for (const w of group) homophones.set(w, [...(homophones.get(w) || []), ...group]);
+      status.textContent = "Ready. The result updates as you type.";
+      render();
+    })
+    .catch(() => { status.textContent = "Couldn't load the dictionary. Check your connection and reload the page."; });
+}
+let started = false;
+for (const ev of ["focus", "pointerdown", "keydown"]) input.addEventListener(ev, () => started || (started = true, load()));
 </script>
 </body>
 </html>
