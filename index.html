@@ -32,7 +32,16 @@
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Any",
       "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-      "description": "Converts English text to IPA phonetic transcription (General American) with stress marks, homophones and a/an hints."
+      "description": "Converts English text to IPA phonetic transcription (General American) with stress marks, homophones and a/an hints.",
+      "author": {"@id": "https://dimatretyak.github.io/english-to-ipa/#author"}
+    },
+    {
+      "@type": "Person",
+      "@id": "https://dimatretyak.github.io/english-to-ipa/#author",
+      "name": "Dima Tretyak",
+      "jobTitle": "Software developer",
+      "image": "https://dimatretyak.github.io/english-to-ipa/img/dima-tretyak.webp",
+      "sameAs": ["https://x.com/dimatretyak", "https://github.com/dimatretyak", "https://bestconvo.com/author/dima-tretyak"]
     },
     {
       "@type": "FAQPage",
@@ -89,6 +98,11 @@ th { color: var(--muted); font-weight: 600; font-size: .85rem; }
 .chart td:first-child { font-size: 1.15rem; width: 56px; }
 details { border-bottom: 1px solid var(--line); padding: 10px 0; }
 summary { font-weight: 600; cursor: pointer; }
+.author { display: flex; gap: 16px; align-items: flex-start; }
+.author img { width: 88px; height: 88px; border-radius: 50%; flex-shrink: 0; background: var(--line); }
+.author h3 { margin: 0; font-size: 1.15rem; }
+.author .role { color: var(--muted); margin: 2px 0 8px; font-size: .95rem; }
+.author p { margin: 0 0 8px; }
 footer { color: var(--muted); font-size: .85rem; margin-top: 40px; }
 a { color: var(--accent); }
 </style>
@@ -167,6 +181,17 @@ a { color: var(--accent); }
 <details><summary>Why is r written as r and not ɹ?</summary><p>Strict IPA writes the English r sound as <span class="ipa">ɹ</span>, but learner dictionaries such as Cambridge and Oxford write <span class="ipa">r</span>. This tool follows the dictionaries so the result matches what you see when you look a word up.</p></details>
 <details><summary>What if a word is missing?</summary><p>The dictionary has about 126,000 words and names. Words that aren't in it are shown with a question mark and left untranscribed rather than guessed.</p></details>
 <details><summary>Is my text sent anywhere?</summary><p>No. The dictionary is downloaded once and the conversion runs in your browser. Nothing you type leaves your device. The page uses Google Analytics to count visits, without your text.</p></details>
+
+<h2>About the author</h2>
+<section class="card author" aria-label="About the author">
+  <img src="img/dima-tretyak.webp" width="88" height="88" alt="Portrait of Dima Tretyak" loading="lazy">
+  <div>
+    <h3>Dima Tretyak</h3>
+    <p class="role">Software developer, creator of <a href="https://wordofdayapp.com/about?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=english_to_ipa&amp;utm_content=author">Word of the Day</a> · <a href="https://x.com/dimatretyak" rel="me">@dimatretyak on X</a></p>
+    <p>I'm a full-stack software developer with more than 15 years of experience building web and mobile products. I make Word of the Day, an app for learning one English word a day, and built this converter as a free tool for English learners.</p>
+    <p>The transcriptions come from the CMU Pronouncing Dictionary, not from my own judgement. If you spot a wrong one, <a href="https://github.com/dimatretyak/english-to-ipa/issues">open an issue on GitHub</a>.</p>
+  </div>
+</section>
 
 <aside class="cta">
   <strong>Building your English vocabulary?</strong>
