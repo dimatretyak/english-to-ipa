@@ -107,6 +107,9 @@ summary { font-weight: 600; cursor: pointer; }
 .author h3 { margin: 0; font-size: 1.15rem; }
 .author .role { color: var(--muted); margin: 2px 0 8px; font-size: .95rem; }
 .author p { margin: 0 0 8px; }
+@media (max-width: 560px) {
+  .author { flex-direction: column; align-items: center; text-align: center; }
+}
 footer { color: var(--muted); font-size: .85rem; margin-top: 40px; }
 a { color: var(--accent); }
 </style>
