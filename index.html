@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English to IPA Converter: Free Phonetic Transcription Tool</title>
+<meta name="description" content="Type English text and get its IPA phonetic transcription with stress marks, American pronunciation. Free, instant, works offline. Shows homophones and a/an.">
+<link rel="canonical" href="https://dimatretyak.github.io/english-to-ipa/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="English to IPA Converter">
+<meta property="og:description" content="Free phonetic transcription of English text in IPA, with stress marks and homophones.">
+<meta property="og:url" content="https://dimatretyak.github.io/english-to-ipa/">
+<meta name="theme-color" content="#4f46e5">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "English to IPA Converter",
+      "url": "https://dimatretyak.github.io/english-to-ipa/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+      "description": "Converts English text to IPA phonetic transcription (General American) with stress marks, homophones and a/an hints."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "Which accent does the converter use?", "acceptedAnswer": {"@type": "Answer", "text": "General American. The pronunciations come from the CMU Pronouncing Dictionary, which records American English. British transcriptions differ, for example in words like water, car and tomato."}},
+        {"@type": "Question", "name": "Why do some words show two transcriptions?", "acceptedAnswer": {"@type": "Answer", "text": "Some words have more than one accepted pronunciation (tomato, either) or are pronounced differently depending on meaning (read in present and past tense). The converter shows the first one in the full text and all of them in the word list."}},
+        {"@type": "Question", "name": "Why is r written as r and not ɹ?", "acceptedAnswer": {"@type": "Answer", "text": "Strict IPA writes the English r sound as ɹ, but learner dictionaries such as Cambridge and Oxford write r. This tool follows the dictionaries so the result matches what you see when you look a word up."}},
+        {"@type": "Question", "name": "What if a word is missing?", "acceptedAnswer": {"@type": "Answer", "text": "The dictionary has about 126,000 words and names. Words that aren't in it are shown with a question mark and left untranscribed rather than guessed."}},
+        {"@type": "Question", "name": "Is my text sent anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. The dictionary is downloaded once and the conversion runs in your browser. Nothing you type leaves your device."}}
+      ]
+    }
+  ]
+}
+</script>
+<style>
+:root {
+  --bg: #f7f7fb; --card: #fff; --text: #1c1c28; --muted: #5d5d72; --line: #e3e3ee;
+  --accent: #4f46e5; --accent-ink: #fff; --ipa: #3b31c9; --warn: #b45309;
+  --cta-a: #4f46e5; --cta-b: #db2777;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12121a; --card: #1c1c28; --text: #ececf4; --muted: #a1a1b8; --line: #2e2e40;
+    --accent: #818cf8; --accent-ink: #12121a; --ipa: #a5b4fc; --warn: #fbbf24;
+    --cta-a: #4338ca; --cta-b: #be185d;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 8px 0 8px; }
+h2 { font-size: 1.3rem; margin: 40px 0 12px; }
+p.lead { color: var(--muted); margin: 0 0 20px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+label { font-weight: 600; display: block; margin-bottom: 6px; }
+textarea { width: 100%; min-height: 96px; resize: vertical; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.result { margin-top: 14px; display: flex; gap: 10px; align-items: flex-start; }
+.ipa { font-family: "Doulos SIL", "Charis SIL", "Gentium Plus", "Lucida Sans Unicode", "Segoe UI", system-ui, sans-serif; color: var(--ipa); }
+#out { flex: 1; font-size: 1.35rem; min-height: 2em; word-break: break-word; }
+.miss { color: var(--warn); }
+button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 8px 14px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.status { color: var(--muted); font-size: .9rem; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: .85rem; }
+.words { margin-top: 16px; overflow-x: auto; }
+.cta { margin: 32px 0; padding: 20px; border-radius: 16px; color: #fff; background: linear-gradient(135deg, var(--cta-a), var(--cta-b)); }
+.cta strong { display: block; font-size: 1.25rem; line-height: 1.3; margin-bottom: 6px; }
+.cta p { margin: 0 0 14px; opacity: .95; }
+.cta a { display: inline-block; background: #fff; color: #3b0764; font-weight: 700; text-decoration: none; padding: 10px 18px; border-radius: 999px; }
+.cta a:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.chart td:first-child { font-size: 1.15rem; width: 56px; }
+details { border-bottom: 1px solid var(--line); padding: 10px 0; }
+summary { font-weight: 600; cursor: pointer; }
+footer { color: var(--muted); font-size: .85rem; margin-top: 40px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<h1>English to IPA Converter</h1>
+<p class="lead">Type or paste English text to get its phonetic transcription in the International Phonetic Alphabet, with stress marks. American pronunciation, free, and it runs entirely in your browser.</p>
+
+<section class="card" aria-label="Converter">
+  <label for="in">English text</label>
+  <textarea id="in" spellcheck="false">Hello, how are you today?</textarea>
+  <div class="result">
+    <div id="out" class="ipa" aria-live="polite">/həˈloʊ haʊ ɑr ju təˈdeɪ/</div>
+    <button id="copy" type="button">Copy</button>
+  </div>
+  <div id="status" class="status">Loading the dictionary (about 1 MB)…</div>
+  <div class="words">
+    <table>
+      <thead><tr><th>Word</th><th>IPA</th><th>a / an</th><th>Sounds like</th></tr></thead>
+      <tbody id="words">
+        <tr><td>hello</td><td class="ipa">/həˈloʊ/, /hɛˈloʊ/</td><td>a</td><td></td></tr>
+        <tr><td>how</td><td class="ipa">/haʊ/</td><td>a</td><td>howe</td></tr>
+        <tr><td>are</td><td class="ipa">/ɑr/, /ɚ/</td><td>an</td><td>ar, our</td></tr>
+        <tr><td>you</td><td class="ipa">/ju/</td><td>a</td><td>yew</td></tr>
+        <tr><td>today</td><td class="ipa">/təˈdeɪ/, /tuˈdeɪ/</td><td>a</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<aside class="cta">
+  <strong>Learn one new English word every day</strong>
+  <p>A free word of the day with meaning and examples, a dictionary by topic and flashcard practice to grow your vocabulary.</p>
+  <a href="https://wordofdayapp.com/?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=english_to_ipa&amp;utm_content=main_cta">Get today's word →</a>
+</aside>
+
+<h2>How the converter works</h2>
+<p>Each word is looked up in the <a href="https://github.com/cmusphinx/cmudict">CMU Pronouncing Dictionary</a>, about 126,000 words and names with their American pronunciation. The dictionary's ARPAbet codes are turned into IPA symbols, and the stress mark is placed before the stressed syllable: <span class="ipa">ˈ</span> for primary stress, <span class="ipa">ˌ</span> for secondary. One-syllable words get no mark, as in most dictionaries.</p>
+<p>The word list under the result shows every pronunciation a word has, whether it takes <em>a</em> or <em>an</em> (that depends on the first sound, not the first letter: <em>an hour</em>, <em>a university</em>), and common words that sound the same.</p>
+
+<h2>English IPA symbols chart</h2>
+<p>The symbols this converter uses, with an example word for each sound.</p>
+<div class="card">
+<table class="chart">
+  <thead><tr><th>IPA</th><th>Example</th><th>IPA</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td class="ipa">i</td><td>see /si/</td><td class="ipa">p</td><td>pen /pɛn/</td></tr>
+    <tr><td class="ipa">ɪ</td><td>sit /sɪt/</td><td class="ipa">b</td><td>bad /bæd/</td></tr>
+    <tr><td class="ipa">eɪ</td><td>day /deɪ/</td><td class="ipa">t</td><td>tea /ti/</td></tr>
+    <tr><td class="ipa">ɛ</td><td>bed /bɛd/</td><td class="ipa">d</td><td>did /dɪd/</td></tr>
+    <tr><td class="ipa">æ</td><td>cat /kæt/</td><td class="ipa">k</td><td>cat /kæt/</td></tr>
+    <tr><td class="ipa">ɑ</td><td>father /ˈfɑðɚ/</td><td class="ipa">ɡ</td><td>go /ɡoʊ/</td></tr>
+    <tr><td class="ipa">ɔ</td><td>law /lɔ/</td><td class="ipa">tʃ</td><td>chair /tʃɛr/</td></tr>
+    <tr><td class="ipa">oʊ</td><td>go /ɡoʊ/</td><td class="ipa">dʒ</td><td>jam /dʒæm/</td></tr>
+    <tr><td class="ipa">ʊ</td><td>book /bʊk/</td><td class="ipa">f</td><td>fall /fɔl/</td></tr>
+    <tr><td class="ipa">u</td><td>food /fud/</td><td class="ipa">v</td><td>van /væn/</td></tr>
+    <tr><td class="ipa">ʌ</td><td>cup /kʌp/</td><td class="ipa">θ</td><td>thin /θɪn/</td></tr>
+    <tr><td class="ipa">ə</td><td>about /əˈbaʊt/</td><td class="ipa">ð</td><td>this /ðɪs/</td></tr>
+    <tr><td class="ipa">ɝ</td><td>bird /bɝd/</td><td class="ipa">s</td><td>see /si/</td></tr>
+    <tr><td class="ipa">ɚ</td><td>water /ˈwɔtɚ/</td><td class="ipa">z</td><td>zoo /zu/</td></tr>
+    <tr><td class="ipa">aɪ</td><td>my /maɪ/</td><td class="ipa">ʃ</td><td>she /ʃi/</td></tr>
+    <tr><td class="ipa">aʊ</td><td>now /naʊ/</td><td class="ipa">ʒ</td><td>vision /ˈvɪʒən/</td></tr>
+    <tr><td class="ipa">ɔɪ</td><td>boy /bɔɪ/</td><td class="ipa">h</td><td>hat /hæt/</td></tr>
+    <tr><td class="ipa">m</td><td>man /mæn/</td><td class="ipa">l</td><td>leg /lɛɡ/</td></tr>
+    <tr><td class="ipa">n</td><td>no /noʊ/</td><td class="ipa">r</td><td>red /rɛd/</td></tr>
+    <tr><td class="ipa">ŋ</td><td>sing /sɪŋ/</td><td class="ipa">w</td><td>wet /wɛt/</td></tr>
+    <tr><td class="ipa">ˈ</td><td>primary stress</td><td class="ipa">j</td><td>yes /jɛs/</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Questions</h2>
+<details><summary>Which accent does the converter use?</summary><p>General American. The pronunciations come from the CMU Pronouncing Dictionary, which records American English. British transcriptions differ, for example in words like <em>water</em>, <em>car</em> and <em>tomato</em>.</p></details>
+<details><summary>Why do some words show two transcriptions?</summary><p>Some words have more than one accepted pronunciation (<em>tomato</em>, <em>either</em>) or are pronounced differently depending on meaning (<em>read</em> in present and past tense). The converter shows the first one in the full text and all of them in the word list.</p></details>
+<details><summary>Why is r written as r and not ɹ?</summary><p>Strict IPA writes the English r sound as <span class="ipa">ɹ</span>, but learner dictionaries such as Cambridge and Oxford write <span class="ipa">r</span>. This tool follows the dictionaries so the result matches what you see when you look a word up.</p></details>
+<details><summary>What if a word is missing?</summary><p>The dictionary has about 126,000 words and names. Words that aren't in it are shown with a question mark and left untranscribed rather than guessed.</p></details>
+<details><summary>Is my text sent anywhere?</summary><p>No. The dictionary is downloaded once and the conversion runs in your browser. Nothing you type leaves your device.</p></details>
+
+<aside class="cta">
+  <strong>Building your English vocabulary?</strong>
+  <p>Get a new word every day, browse words by topic and practice with flashcards. Free.</p>
+  <a href="https://wordofdayapp.com/?utm_source=github_pages&amp;utm_medium=referral&amp;utm_campaign=english_to_ipa&amp;utm_content=bottom_cta">Try Word of the Day →</a>
+</aside>
+
+<footer>
+  <p>Pronunciations: <a href="https://github.com/cmusphinx/cmudict">CMU Pronouncing Dictionary</a>, © Carnegie Mellon University, BSD license. Homophone list filtered with <a href="https://github.com/rspeer/wordfreq">wordfreq</a> (CC BY-SA 4.0). <a href="https://github.com/dimatretyak/english-to-ipa">Source code on GitHub</a>.</p>
+</footer>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const input = $("in"), out = $("out"), words = $("words"), status = $("status");
+const VOWEL_START = /^[ˈˌ]?[iɪeɛæɑɔoʊuʌəɝɚa]/;
+let dict = null, homophones = new Map();
+
+const tokens = (text) => text.toLowerCase().replace(/[’‘]/g, "'").match(/[a-z]+(?:'[a-z]+)*/g) || [];
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+function render() {
+  if (!dict) return;
+  const list = tokens(input.value);
+  out.innerHTML = list.length
+    ? "/" + list.map((w) => dict[w] ? esc(dict[w].split("|")[0]) : `<span class="miss">${esc(w)}?</span>`).join(" ") + "/"
+    : "";
+  const seen = new Set();
+  words.innerHTML = list.filter((w) => !seen.has(w) && seen.add(w)).slice(0, 200).map((w) => {
+    const ipas = dict[w] ? dict[w].split("|") : null;
+    const article = ipas ? (VOWEL_START.test(ipas[0]) ? "an" : "a") : "";
+    const same = [...new Set(homophones.get(w) || [])].filter((x) => x !== w).join(", ");
+    return `<tr><td>${esc(w)}</td><td class="ipa">${ipas ? ipas.map((i) => "/" + esc(i) + "/").join(", ") : '<span class="miss">not in the dictionary</span>'}</td><td>${article}</td><td>${esc(same)}</td></tr>`;
+  }).join("");
+}
+
+$("copy").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(out.textContent); $("copy").textContent = "Copied"; }
+  catch { $("copy").textContent = "Select and copy"; }
+  setTimeout(() => ($("copy").textContent = "Copy"), 1500);
+});
+input.addEventListener("input", render);
+
+fetch("data/dict.json")
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then((data) => {
+    dict = data.w;
+    // A word with two pronunciations (read: /rɛd/, /rid/) sits in two groups.
+    for (const group of data.h) for (const w of group) homophones.set(w, [...(homophones.get(w) || []), ...group]);
+    status.textContent = "Ready. The result updates as you type.";
+    render();
+  })
+  .catch(() => { status.textContent = "Couldn't load the dictionary. Check your connection and reload the page."; });
+</script>
+</body>
+</html>
